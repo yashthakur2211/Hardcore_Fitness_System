@@ -1,0 +1,26 @@
+{
+  "name": "gymmaster-api",
+  "version": "1.0.0",
+  "description": "Gym Master Hub API Server",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "init-db": "node scripts/initDatabase.js",
+    "fix-admin": "node scripts/fixAdminPassword.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cloudinary": "^2.10.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "mysql2": "^3.16.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}
