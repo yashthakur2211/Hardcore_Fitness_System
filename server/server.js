@@ -29,18 +29,23 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Middleware - CORS configuration
-const allowedOrigins = process.env.FRONTEND_URL 
-  ? process.env.FRONTEND_URL.split(',')
-  : ['http://localhost:5173', 'http://localhost:8081', 'http://localhost:3000'];
+const extraOrigins = process.env.FRONTEND_URL
+  ? process.env.FRONTEND_URL.split(',').map(o => o.trim()).filter(Boolean)
+  : [];
 
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
+    // Allow requests with no origin (mobile apps, curl, Render health checks)
     if (!origin) return callback(null, true);
-    
-    if (allowedOrigins.indexOf(origin) !== -1 || origin.startsWith('http://localhost:')) {
+
+    const isLocalhost = origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:');
+    const isNetlify = origin.endsWith('.netlify.app');
+    const isAllowed = extraOrigins.includes(origin);
+
+    if (isLocalhost || isNetlify || isAllowed) {
       callback(null, true);
     } else {
+      console.error('CORS blocked origin:', origin);
       callback(new Error('Not allowed by CORS'));
     }
   },
