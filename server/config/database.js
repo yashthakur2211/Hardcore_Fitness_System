@@ -3,10 +3,11 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const isProduction = process.env.NODE_ENV === 'production';
+const dbHost = process.env.DB_HOST || 'localhost';
+const isRemote = dbHost !== 'localhost' && dbHost !== '127.0.0.1';
 
 const dbConfig = {
-  host: process.env.DB_HOST || 'localhost',
+  host: dbHost,
   port: parseInt(process.env.DB_PORT || '3306', 10),
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || '',
@@ -16,8 +17,8 @@ const dbConfig = {
   queueLimit: 0,
   enableKeepAlive: true,
   keepAliveInitialDelay: 0,
-  // Cloud MySQL providers (Azure, Railway, PlanetScale) require SSL for external connections
-  ...(isProduction && { ssl: { rejectUnauthorized: false } }),
+  // Enable SSL for any remote host (Azure, Railway, etc. all require it)
+  ...(isRemote && { ssl: { rejectUnauthorized: false } }),
 };
 
 // Create connection pool
